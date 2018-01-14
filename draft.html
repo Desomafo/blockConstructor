@@ -1,0 +1,36 @@
+<html>
+ <head>
+  <script src="blockConstructor.js" type="text/javascript"></script>
+  <script type="application/javascript">
+    //Here we can make new objects
+    //Now you can make rectangle, rounded rectangle, line, arrow and rhomb
+    //Constructors for this objects:
+    //rhomb conditionBlock(coordinates: x, y, width, height, inside text, height of text)
+    //arrow arrow(coordinates: x, y, width, height, inside text, height of text)
+    //rhomb conditionBlock(coordinates: x, y, width, height, inside text, height of text)
+    function init() {
+      var s = new CanvasState(document.getElementById('canvas'));
+      s.addShape(new roundedRect(50, 50 - 30, 80, 30, 10, 1, "Begin"));
+      s.addShape(new conditionBlock(50, 100 - 30, 80, 50, 1, "i<5"));
+      s.addShape(new arrow(90, 80 - 30, 0, 20, 0));
+      s.addShape(new arrow(90, 150 - 30, 0, 20, 0, '+'));
+      s.addShape(new rect(50, 170 - 30, 80, 30, 1, "i++"));
+      s.addShape(new line(90, 200 - 30, 0, 10));
+      s.addShape(new line(90, 210 - 30, -70, 0));
+      s.addShape(new line(20, 210 - 30, 0, -85));
+      s.addShape(new arrow(20, 125 - 30, 30, 0));
+      s.addShape(new line(130, 125 - 30, 20, 0, 0, '-'));
+      s.addShape(new line(150, 125 - 30, 0, 105));
+      s.addShape(new line(150, 230 - 30, -60, 0));
+      s.addShape(new arrow(90, 230 - 30, 0, 20));
+      s.addShape(new roundedRect(50, 250 - 30, 80, 30, 10, 0, "End"));
+    }    
+  </script>
+  <style type= "text/css">
+      canvas { border: 1px solid black; }
+  </style>
+ </head>
+ <body onload="init();">
+   <canvas id="canvas" width="500" height="500"></canvas>
+ </body>
+</html>
