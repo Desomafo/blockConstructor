@@ -1,9 +1,8 @@
-function line(x, y, width, height, active, text, text_height, text_position) {
+function line(x, y, width, height, text, text_height, text_position) {
   this.x = x || 0;
   this.y = y || 0;
   this.width = width || 0;
   this.height = height || 0;
-  this.active = active || 0;
   this.text = text || '';
   this.text_height = text_height || 14;
   this.text_position = text_position || 1;
@@ -43,12 +42,16 @@ line.prototype.contains = function(mx, my) {
 // rectangle
 
 
-function rect(x, y, width, height, active, text, text_height = 14) {
+function rect(x, y, width, height, active, trick, text, text_height = 14) {
   this.x = x || 0;
   this.y = y || 0;
   this.width = width || 1;
   this.height = height || 1;
   this.active = active || 0;
+  if (!trick) {
+    this.true_x = x;
+    this.true_y = y;
+  }
   this.text = text;
   this.text_height = text_height || 1;
 }
@@ -76,13 +79,17 @@ rect.prototype.contains = function(mx, my) {
 // rounded rectangle for Begin and End
 
 
-function roundedRect(x, y, width, height, radius, active, text, text_height = 14) {
+function roundedRect(x, y, width, height, radius, active, trick, text, text_height = 14) {
   this.x = x || 0;
   this.y = y || 0;
   this.width = width || 1;
   this.height = height || 1;
   this.radius = radius || 1;
   this.active = active || 0;
+  if (!trick) {
+    this.true_x = x;
+    this.true_y = y;
+  }
   this.text = text;
   this.text_height = text_height || 1;
 }
@@ -115,12 +122,16 @@ roundedRect.prototype.contains = function(mx, my) {
 // rhombus
 
 
-function conditionBlock(x, y, width, height, active, text, text_height = 14) {
+function conditionBlock(x, y, width, height, active, trick, text, text_height = 14) {
   this.x = x || 0;
   this.y = y || 0;
   this.width = width || 1;
   this.height = height || 1;
   this.active = active || 0;
+  if (!trick) {
+    this.true_x = x;
+    this.true_y = y;
+  }
   this.text = text;
   this.text_height = text_height || 1;
 }
@@ -148,13 +159,12 @@ conditionBlock.prototype.contains = function(mx, my) {
 // arrows
 
 
-function arrow(x, y, width, height, active, text = '', text_height = 14, text_position = 1) {
+function arrow(x, y, width, height, text = '', text_height = 14, text_position = 1) {
   this.x = x || 0;
   this.y = y || 0;
   this.width = width;
   this.height = height;
   this.text = text;
-  this.active = active || 0;
   this.text_height = text_height || 1;
   this.text_position = text_position;
 }
@@ -259,10 +269,15 @@ function CanvasState(canvas) {
   // places for not located blocks
   this.places = [];
   for (var y_place = 3*(this.height / 4); y_place < this.height; y_place += this.height/8) {
-  	for (var x_place = 0; x_place <= this.width; x_place += this.width/4) {
-  		this.places.push([x_place, y_place]);
+  	for (var x_place = 0; x_place <= 3*(this.width /4); x_place += this.width/4) {
+  		this.places.push([x_place + this.width/32, y_place + this.height/32]);
   		}
   }
+
+
+  // true places for blocks
+  this.true_places = [];
+
   
   
   // **** Then events! ****
@@ -286,11 +301,19 @@ function CanvasState(canvas) {
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].active && shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
-        // Keep track of where in the object we clicked
-        // so we can move it smoothly (see mousemove)
-        myState.dragoffx = mx - mySel.x;
-        myState.dragoffy = my - mySel.y;
-        myState.dragging = true;
+        if (myState.places.includes([mySel.x, mySel.y])) {
+          myState.true_places.splice(-1, 0, [mySel.x, mySel.y]);
+          [mySel.x, mySel.y] = myState.true_places.pop();
+          console.log(myState.true_places);
+          console.log(myState.places);
+        } else {
+          myState.true_places.splice(-1, 0, [mySel.x, mySel.y]);
+          [mySel.x, mySel.y] = myState.true_places.pop()
+          console.log(myState.true_places);
+          console.log(myState.places);
+        }
+        
+
         myState.selection = mySel;
         myState.valid = false;
         return;
@@ -340,6 +363,10 @@ function CanvasState(canvas) {
 
 CanvasState.prototype.addShape = function(shape) {
   this.shapes.push(shape);
+  if (shape.active && shape.true_x) {
+    this.true_places.push([shape.x, shape.y]); 
+    [shape.x, shape.y] = this.places.pop();
+  }
   this.valid = false;
 }
 
@@ -352,7 +379,7 @@ CanvasState.prototype.drawPlacesBorders = function (){
 	this.ctx.strokeStyle = "black";
 	this.ctx.lineWidth = 1;
   	for (var i = this.places.length - 1; i >= 0; i--) {
-  			this.ctx.rect(this.places[i][0], this.places[i][1], this.width/4, this.height/4)
+  			this.ctx.rect(this.places[i][0] - this.width/32, this.places[i][1] - this.height/32, this.width/4, this.height/4)
   		}	
   	this.ctx.stroke();
  }
