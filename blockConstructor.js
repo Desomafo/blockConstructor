@@ -1,3 +1,24 @@
+
+function equals(element, index, array) {
+    // compare lengths - can save a lot of time 
+    if (element.length != array.length)
+        return false;
+
+    for (var i = 0, l=element.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (element[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!(element[i] == array[i]))
+                return false;       
+        }           
+        else if (element[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+
 function line(x, y, width, height, text, text_height, text_position) {
   this.x = x || 0;
   this.y = y || 0;
@@ -278,6 +299,7 @@ function CanvasState(canvas) {
   // true places for blocks
   this.true_places = [];
 
+  this.places_area = new rect(0, 3*(this.height / 4), this.width, this.height);
   
   
   // **** Then events! ****
@@ -301,16 +323,12 @@ function CanvasState(canvas) {
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].active && shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
-        if (myState.places.includes([mySel.x, mySel.y])) {
-          myState.true_places.splice(-1, 0, [mySel.x, mySel.y]);
-          [mySel.x, mySel.y] = myState.true_places.pop();
-          console.log(myState.true_places);
-          console.log(myState.places);
+        if (myState.places_area.contains(mySel.x, mySel.y)) {
+          myState.true_places.push([mySel.x, mySel.y]);
+          myState.places.push([mySel.x, mySel.y] = myState.true_places.shift());
         } else {
-          myState.true_places.splice(-1, 0, [mySel.x, mySel.y]);
-          [mySel.x, mySel.y] = myState.true_places.pop()
-          console.log(myState.true_places);
-          console.log(myState.places);
+          myState.true_places.unshift([mySel.x, mySel.y]);
+          [mySel.x, mySel.y] = myState.true_places.pop();
         }
         
 
@@ -363,8 +381,10 @@ function CanvasState(canvas) {
 
 CanvasState.prototype.addShape = function(shape) {
   this.shapes.push(shape);
-  if (shape.active && shape.true_x) {
-    this.true_places.push([shape.x, shape.y]); 
+  if (shape.active) {
+    if (shape.true_x) {
+      this.true_places.push([shape.x, shape.y]);
+    } 
     [shape.x, shape.y] = this.places.pop();
   }
   this.valid = false;
@@ -396,7 +416,7 @@ CanvasState.prototype.draw = function() {
     // ** Add stuff you want drawn in the background all the time here **
     
 
-  	this.drawPlacesBorders();
+  	//this.drawPlacesBorders();
 
     // draw all shapes
     var l = shapes.length;
