@@ -277,6 +277,7 @@ function CanvasState(canvas) {
   // true places for blocks
   this.true_places = [];
 
+  // This rectangle is just for describing the area where user is clicking to move objects to scheme
   this.places_area = new rect(0, 3*(this.height / 4), this.width, this.height);
   
   
@@ -302,11 +303,14 @@ function CanvasState(canvas) {
       if (shapes[i].active && shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
         if (myState.places_area.contains(mySel.x, mySel.y)) {
+          if (myState.places.length != 3){
           myState.true_places.push([mySel.x, mySel.y]);
           myState.places.push([mySel.x, mySel.y] = myState.true_places.shift());
+          }
         } else {
           myState.true_places.unshift([mySel.x, mySel.y]);
           [mySel.x, mySel.y] = myState.true_places.pop();
+          myState.places.pop();
         }
         
 
@@ -328,7 +332,7 @@ function CanvasState(canvas) {
   this.stroke_color = 'black';
   this.stroke_width = 1;
   this.selectionColor = '#CC0000';
-  this.selectionWidth = 3 ;  
+  this.selectionWidth = 2 ;  
   this.interval = 30;
   setInterval(function() { myState.draw(); }, myState.interval);
 }
