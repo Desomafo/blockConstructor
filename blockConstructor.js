@@ -1,23 +1,5 @@
+// plain line
 
-function equals(element, index, array) {
-    // compare lengths - can save a lot of time 
-    if (element.length != array.length)
-        return false;
-
-    for (var i = 0, l=element.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (element[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!(element[i] == array[i]))
-                return false;       
-        }           
-        else if (element[i] != array[i]) { 
-            // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;   
-        }           
-    }       
-    return true;
-}
 
 function line(x, y, width, height, text, text_height, text_position) {
   this.x = x || 0;
@@ -280,11 +262,7 @@ function CanvasState(canvas) {
   
   this.valid = false; // when set to false, the canvas will redraw everything
   this.shapes = [];  // the collection of things to be drawn
-  this.dragging = false; // Keep track of when we are dragging
-  // the current selected object. In the future we could turn this into an array for multiple selection
   this.selection = null;
-  this.dragoffx = 0; // See mousedown and mousemove events for explanation
-  this.dragoffy = 0;
 
 
   // places for not located blocks
@@ -313,7 +291,7 @@ function CanvasState(canvas) {
   
   //fixes a problem where double clicking causes text to get selected on the canvas
   canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
-  // Up, down, and move are for dragging
+  // Swaping places of objects
   canvas.addEventListener('mousedown', function(e) {
     var mouse = myState.getMouse(e);
     var mx = mouse.x;
@@ -345,30 +323,6 @@ function CanvasState(canvas) {
     }
   }, true);
 
-  
-  canvas.addEventListener('mousemove', function(e) {
-    if (myState.dragging){
-      var mouse = myState.getMouse(e);
-      // We don't want to drag the object by its top-left corner, we want to drag it
-      // from where we clicked. Thats why we saved the offset and use it here
-      myState.selection.x = mouse.x - myState.dragoffx;
-      myState.selection.y = mouse.y - myState.dragoffy;   
-      myState.valid = false; // Something's dragging so we must redraw
-    }
-  }, true);
-
-
-  canvas.addEventListener('mouseup', function(e) {
-    myState.dragging = false;
-  }, true);
-
-
-  // double click for making new shapes
-  canvas.addEventListener('dblclick', function(e) {
-    var mouse = myState.getMouse(e);
-    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
-  }, true);
-  
 
   // **** Options! ****
   this.stroke_color = 'black';
