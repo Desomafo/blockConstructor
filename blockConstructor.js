@@ -268,7 +268,7 @@ function CanvasState(canvas) {
   // places for not located blocks
   this.places = [];
   for (var y_place = 3*(this.height / 4); y_place < this.height; y_place += this.height/8) {
-  	for (var x_place = 0; x_place <= 3*(this.width /4); x_place += this.width/4) {
+  	for (var x_place = 0; x_place <= 3*(this.width / 4); x_place += this.width/4) {
   		this.places.push([x_place + this.width/32, y_place + this.height/32]);
   		}
   }
@@ -280,7 +280,11 @@ function CanvasState(canvas) {
   // This rectangle is just for describing the area where user is clicking to move objects to scheme
   this.places_area = new rect(0, 3*(this.height / 4), this.width, this.height);
   
-  
+
+  // Button for checking the answers (should to style it somehow and don't forget to draw it in CanvasState.draw())
+  this.button = new rect(3*(this.width / 4), this.height / 8, 40, 20, 1, 0, "Check");
+
+
   // **** Then events! ****
   
   // This is an example of a closure!
@@ -292,13 +296,32 @@ function CanvasState(canvas) {
   
   //fixes a problem where double clicking causes text to get selected on the canvas
   canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+
   // Swaping places of objects
-  canvas.addEventListener('mousedown', function(e) {
+
+  canvas.addEventListener('mousedown', function click(e) {
     var mouse = myState.getMouse(e);
     var mx = mouse.x;
     var my = mouse.y;
     var shapes = myState.shapes;
     var l = shapes.length;
+
+    // pressing the button
+    if (myState.button.contains(mx, my)){
+      if (myState.taskCheck()) {
+        myState.background_color = 'rgba(0,255,0,0.3)';
+        clearInterval(myState.proccesing);
+        myState.selection = null;
+        myState.valid = false;
+        myState.draw();
+        canvas.removeEventListener('mousedown', click, true);
+      } else {
+        myState.background_color = 'rgba(255,0,0,0.8)';
+      }
+    }
+
+
+    // pressing the shapes
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].active && shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
@@ -319,6 +342,7 @@ function CanvasState(canvas) {
         return;
       }
     }
+
     // havent returned means we have failed to select anything.
     // If there was an object selected, we deselect it
     if (myState.selection) {
@@ -334,7 +358,9 @@ function CanvasState(canvas) {
   this.selectionColor = '#CC0000';
   this.selectionWidth = 2 ;  
   this.interval = 30;
-  setInterval(function() { myState.draw(); }, myState.interval);
+  this.background_color = 'white';
+  this.proccesing = setInterval(function() { myState.draw(); }, myState.interval);
+
 }
 
 CanvasState.prototype.addShape = function(shape) {
@@ -342,24 +368,26 @@ CanvasState.prototype.addShape = function(shape) {
   if (shape.active) {
     if (shape.true_x) {
       this.true_places.push([shape.x, shape.y]);
-    } 
+    }
     [shape.x, shape.y] = this.places.pop();
   }
   this.valid = false;
 }
 
 CanvasState.prototype.clear = function() {
-  this.ctx.clearRect(0, 0, this.width, this.height);
+  this.ctx.fillStyle = this.background_color;
+  this.ctx.rect(0, 0, this.width, this.height);
+  this.ctx.fill();
 }
 
 // Temporary function to observe the boundaries of places 
-CanvasState.prototype.drawPlacesBorders = function (){
+CanvasState.prototype.drawPlacesBorders = function () {
 	this.ctx.strokeStyle = "black";
 	this.ctx.lineWidth = 1;
-  	for (var i = this.places.length - 1; i >= 0; i--) {
-  			this.ctx.rect(this.places[i][0] - this.width/32, this.places[i][1] - this.height/32, this.width/4, this.height/4)
-  		}	
-  	this.ctx.stroke();
+  for (var i = this.places.length - 1; i >= 0; i--) {
+  		this.ctx.rect(this.places[i][0] - this.width/32, this.places[i][1] - this.height/32, this.width/4, this.height/4)
+  	}	
+  this.ctx.stroke();
  }
 
 // While draw is called as often as the INTERVAL variable demands,
@@ -370,6 +398,7 @@ CanvasState.prototype.draw = function() {
     var ctx = this.ctx;
     var shapes = this.shapes;
     this.clear();
+    this.background_color = "white";
     
     // ** Add stuff you want drawn in the background all the time here **
     
@@ -387,6 +416,8 @@ CanvasState.prototype.draw = function() {
       ctx.lineWidth = this.stroke_width;
       shapes[i].draw(ctx);
     }
+
+    this.button.draw(ctx);
     
     // draw selection
     // right now this is just a stroke along the edge of the selected Shape
@@ -396,7 +427,7 @@ CanvasState.prototype.draw = function() {
       var mySel = this.selection;
       mySel.draw(ctx);
     }
-    
+
     // ** Add stuff you want drawn on top all the time here **
     
     this.valid = true;
@@ -427,4 +458,16 @@ CanvasState.prototype.getMouse = function(e) {
   
   // We return a simple javascript object (a hash) with x and y defined
   return {x: mx, y: my};
+}
+
+
+CanvasState.prototype.taskCheck = function() {
+  for (var j = 0; j < this.shapes.length; j++) {
+    if (this.shapes[j].true_x) {
+      if (!(this.shapes[j].true_x == this.shapes[j].x && this.shapes[j].true_y == this.shapes[j].y)) {
+        return false;
+      } 
+    }
+  }
+  return true;
 }
