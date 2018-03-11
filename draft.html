@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="en-ru">
  <head>
+  <meta charset="UTF-8"> 
   <script src="blockConstructor.js" type="text/javascript"></script>
   <script type="application/javascript">
     //Here we can make new objects
@@ -30,13 +32,144 @@
       s.addShape(new rect(0, 0, 80, 30, 1, 1, "i--"));
       s.addShape(new rect(0, 0, 80, 30, 1, 1, "i+2"));
       s.addShape(new roundedRect(0, 0, 80, 30, 10, 1, 1, "Start"));
-    }    
+    } 
+
+    function task1() {
+      var t1 = new CanvasState(document.getElementById('task1'));
+
+      var task = new textBox(t1.width/2, t1.height/16, t1.width - 20, "Необходимо совершить выход из цикла", 14)
+      var begin = new roundedRect(t1.width/4, t1.height/8, t1.width/8-4, t1.height/16-2, 10, 1, 0, "Начало");
+      var arrow1 = new arrow(begin.x + begin.width/2, begin.y + begin.height, 0, 20);
+      var rect1 = new rect(begin.x, arrow1.y + arrow1.height, t1.width/8-4, t1.height/16-2, 0, 0, "i = 1");
+      var arrow2 = new arrow(rect1.x + rect1.width/2, rect1.y + rect1.height, 0, 20);
+      var condition = new conditionBlock(rect1.x, arrow2.y + arrow2.height, t1.width/8-4, t1.height/16-2, 0, 0, "i != 11", 11);
+      var arrow3 = new arrow(condition.x + condition.width/2, condition.y + condition.height, 0, 20, '+');
+      var rect2 = new rect(condition.x, arrow3.y + arrow3.height, t1.width/8-4, t1.height/16-2, 1, 0, "i = i + 2");
+      var b_aL1 = new broken_arrowLine(rect2.x + rect2.width/2, rect2.y + rect2.height, rect2.x + rect2.width/2, rect2.y + rect2.height + 10, rect2.x - 30, rect2.y + rect2.height + 10, rect2.x - 30, condition.y + condition.height/2, condition.x, condition.y + condition.height/2);
+      var line1 = new line(condition.x + condition.width, condition.y + condition.height/2, 20, 0, '-');
+      var b_aL2 = new broken_arrowLine(line1.x + line1.width, line1.y + line1.height, line1.x + line1.width, rect2.y + rect2.height + 20, rect2.x + rect2.width/2, rect2.y + rect2.height + 20, rect2.x + rect2.width/2, rect2.y + rect2.height + 40);
+      var end = new roundedRect(t1.width/4, rect2.y + rect2.height + 40, t1.width/8-4, t1.height/16-2, 10, 0, 0, "Конец");
+	  
+	    var trick1 = new roundedRect(0, 0, t1.width/8-4, t1.height/16-2, 10, 1, 1, "Старт");
+	    var trick2 = new rect(0, 0, t1.width/8-4, t1.height/16-2, 1, 1, "i = i * 2");
+	    var trick3 = new rect(0, 0, t1.width/8-4, t1.height/16-2, 1, 1, "i = i + 3");
+	    var trick4 = new rect(0, 0, t1.width/8-4, t1.height/16-2, 1, 1, "i = i - 3");
+	    var trick5 = new roundedRect(0, 0, t1.width/8-4, t1.height/16-2, 10, 1, 1, "Конец");
+	    var trick6 = new conditionBlock(0, 0, t1.width/8-4, t1.height/16-2, 1, 1, "i++");
+	  
+      t1.addShape(task);
+      t1.addShape(begin);
+      t1.addShape(trick2);
+      t1.addShape(trick3);
+      t1.addShape(arrow1);
+      t1.addShape(rect1);
+      t1.addShape(arrow2);
+      t1.addShape(condition);
+      t1.addShape(arrow3);
+      t1.addShape(rect2);
+      t1.addShape(trick1);
+      t1.addShape(trick5);
+      t1.addShape(trick4);
+      t1.addShape(b_aL1);
+      t1.addShape(line1);
+      t1.addShape(b_aL2);
+      t1.addShape(end);
+	    t1.addShape(trick6);
+    }   
+	
+	function task2() {
+	  var t2 = new CanvasState(document.getElementById('task2'));
+
+      var task = new textBox(t2.width/2, t2.height/16, t2.width - 20, "Цикл должен совершить только 2 итерации", 14)
+      var begin = new roundedRect(t2.width/4, t2.height/8, t2.width/8-4, t2.height/16-2, 10, 0, 0, "Начало");
+      var arrow1 = new arrow(begin.x + begin.width/2, begin.y + begin.height, 0, 20);
+      var rect1 = new rect(begin.x, arrow1.y + arrow1.height, t2.width/8-4, t2.height/16-2, 0, 0, "i = 8");
+      var arrow2 = new arrow(rect1.x + rect1.width/2, rect1.y + rect1.height, 0, 20);
+      var rect2 = new rect(rect1.x, arrow2.y + arrow2.height, t2.width/8-4, t2.height/16-2, 1, 0, "i = i - 4");
+      var arrow3 = new arrow(rect2.x + rect2.width/2, rect2.y + rect2.height, 0, 20);
+      var condition = new conditionBlock(rect2.x, arrow3.y + arrow3.height, t2.width/8-4, t2.height/16-2, 0, 0, "i", 11);
+	  var line1 = new line(condition.x, condition.y + condition.height/2, -20, 0, '+')
+      var b_aL1 = new broken_arrowLine(condition.x - 20, condition.y + condition.height/2, condition.x - 20, arrow2.y + arrow2.height/2, arrow2.x, arrow2.y + arrow2.height/2);
+      var arrow4 = new arrow(condition.x + condition.width/2, condition.y + condition.height, 0, 20, '-');
+      var end = new roundedRect(t2.width/4, arrow4.y + arrow4.height + 40, t2.width/8-4, t2.height/16-2, 10, 1, 0, "Конец");
+	  
+	  var trick1 = new roundedRect(0, 0, t2.width/8-4, t2.height/16-2, 10, 1, 1, "Старт");
+	  var trick2 = new rect(0, 0, t2.width/8-4, t2.height/16-2, 1, 1, "i = i - 2");
+	  var trick3 = new rect(0, 0, t2.width/8-4, t2.height/16-2, 1, 1, "i = i % 2");
+	  var trick4 = new rect(0, 0, t2.width/8-4, t2.height/16-2, 1, 1, "i = i % 3");
+	  var trick5 = new roundedRect(0, 0, t2.width/8-4, t2.height/16-2, 10, 1, 1, "Финиш");
+	  var trick6 = new conditionBlock(0, 0, t2.width/8-4, t2.height/16-2, 1, 1, "i = 2");
+	  
+      t2.addShape(task);
+      t2.addShape(begin);
+      t2.addShape(trick2);
+      t2.addShape(trick3);
+      t2.addShape(arrow1);
+      t2.addShape(rect1);
+      t2.addShape(arrow2);
+      t2.addShape(rect2);
+      t2.addShape(arrow3);
+      t2.addShape(condition);
+      t2.addShape(line1);
+      t2.addShape(b_aL1);
+      t2.addShape(arrow4);
+      t2.addShape(trick1);
+      t2.addShape(trick5);
+      t2.addShape(trick4);
+      t2.addShape(end);
+	  t2.addShape(trick6);
+	}
+
+
+  function task3() {
+    var t3 = new CanvasState(document.getElementById('task3'));
+
+      var task = new textBox(t3.width/2, t3.height/16, t3.width - 20, "Необходимо вывести четные числа", 14)
+      var begin = new roundedRect(t3.width/4, t3.height/8, t3.width/8-4, t3.height/16-2, 10, 1, 0, "Начало");
+      var arrow1 = new arrow(begin.x + begin.width/2, begin.y + begin.height, 0, 20);
+      var condition = new hexBlock(arrow1.x - begin.width/2 - 10, arrow1.y + arrow1.height, t3.width/8-4+18, t3.height/16-2, 0, 0, "i=1;i<13;i++", 12);
+      var arrow2 = new arrow(condition.x + condition.width/2, condition.y + condition.height, 0, 20, '+');
+      var output = new ioBlock(arrow2.x - (t3.width/8-4)/2, arrow2.y + arrow2.height, t3.width/8-4, t3.height/16-2, 1, 0, "i++");
+      var b_l1 = new broken_line(output.x + output.width/2, output.y + output.height, output.x + output.width/2, output.y + output.height + 20, condition.x - 20, output.y + output.height + 20, condition.x - 20, condition.y + condition.height/2);
+      var arrow3 = new arrow(condition.x - 20, condition.y + condition.height/2, 20, 0);
+      var line1 = new line(condition.x + condition.width, condition.y + condition.height/2, 20, 0, '-');
+      var b_aL1 = new broken_arrowLine(line1.x + line1.width, line1.y, line1.x + line1.width, output.y + output.height + 40, b_l1.x, output.y + output.height + 40, b_l1.x, output.y + output.height + 60);
+      var end = new roundedRect(t3.width/4, output.y + output.height + 60, t3.width/8-4, t3.height/16-2, 10, 0, 0, "Конец");
+    
+      var trick1 = new ioBlock(0, 0, t3.width/8-4, t3.height/16-2, 1, 1, "i%2");
+      var trick2 = new rect(0, 0, t3.width/8-4, t3.height/16-2, 1, 1, "i = i * 2");
+      var trick3 = new rect(0, 0, t3.width/8-4, t3.height/16-2, 1, 1, "i = i + 3");
+      var trick4 = new rect(0, 0, t3.width/8-4, t3.height/16-2, 1, 1, "i - 3");
+      var trick5 = new roundedRect(0, 0, t3.width/8-4, t3.height/16-2, 10, 1, 1, "Старт");
+      var trick6 = new conditionBlock(0, 0, t3.width/8-4, t3.height/16-2, 1, 1, "i++");
+    
+      t3.addShape(task);
+      t3.addShape(begin);
+      t3.addShape(trick2);
+      t3.addShape(trick3);
+      t3.addShape(arrow1);
+      t3.addShape(condition);
+      t3.addShape(arrow2);
+      t3.addShape(output);
+      t3.addShape(b_l1);
+      t3.addShape(arrow3);
+      t3.addShape(trick1);
+      t3.addShape(trick5);
+      t3.addShape(trick4);
+      t3.addShape(line1);
+      t3.addShape(b_aL1);
+      t3.addShape(end);
+      t3.addShape(trick6);
+  }
   </script>
   <style type= "text/css">
       canvas { border: 1px solid black; }
   </style>
  </head>
- <body onload="init();">
-   <canvas id="canvas" width="500" height="500"></canvas>
+ <body onload="task1(); task2(); task3();">
+   <!-- <canvas id="canvas" width="500" height="500"></canvas> -->
+   <canvas id="task1" width="500" height="500"></canvas>
+   <canvas id="task2" width="500" height="500"></canvas>
+   <canvas id="task3" width="500" height="500"></canvas>
  </body>
 </html>
